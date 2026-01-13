@@ -11,12 +11,14 @@ CONFIG += c++17
 SOURCES += \
     databasemanager.cpp \
     filemanager.cpp \
+    grademodel.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     databasemanager.h \
     filemanager.h \
+    grademodel.h \
     mainwindow.h
 
 FORMS += \
