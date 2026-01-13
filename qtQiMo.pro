@@ -13,13 +13,15 @@ SOURCES += \
     filemanager.cpp \
     grademodel.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    statisticswidget.cpp
 
 HEADERS += \
     databasemanager.h \
     filemanager.h \
     grademodel.h \
-    mainwindow.h
+    mainwindow.h \
+    statisticswidget.h
 
 FORMS += \
     mainwindow.ui
