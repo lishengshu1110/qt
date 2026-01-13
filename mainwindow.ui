@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>388</width>
+    <height>418</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>学生成绩管理系统</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="studentTab">
+       <attribute name="title">
+        <string>学生管理</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="studentTabLayout">
+        <item>
+         <widget class="QTableView" name="studentTableView">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="studentOperationGroup">
+          <property name="title">
+           <string>学生信息操作</string>
+          </property>
+          <layout class="QVBoxLayout" name="studentOperationLayout">
+           <item>
+            <layout class="QFormLayout" name="studentFormLayout">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelStudentId">
+               <property name="text">
+                <string>学号:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="lineEditStudentId"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelStudentName">
+               <property name="text">
+                <string>姓名:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="lineEditStudentName"/>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelClassName">
+               <property name="text">
+                <string>班级:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="lineEditClassName"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="studentButtonLayout">
+             <item>
+              <widget class="QPushButton" name="btnAddStudent">
+               <property name="text">
+                <string>添加</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnUpdateStudent">
+               <property name="text">
+                <string>更新</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnDeleteStudent">
+               <property name="text">
+                <string>删除</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnRefreshStudents">
+               <property name="text">
+                <string>刷新</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacerStudent">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="courseTab">
+       <attribute name="title">
+        <string>课程管理</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="courseTabLayout">
+        <item>
+         <widget class="QTableView" name="courseTableView">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="courseOperationGroup">
+          <property name="title">
+           <string>课程信息操作</string>
+          </property>
+          <layout class="QVBoxLayout" name="courseOperationLayout">
+           <item>
+            <layout class="QFormLayout" name="courseFormLayout">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelCourseId">
+               <property name="text">
+                <string>课程编号:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="lineEditCourseId"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelCourseName">
+               <property name="text">
+                <string>课程名称:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="lineEditCourseName"/>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelCredits">
+               <property name="text">
+                <string>学分:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="lineEditCredits"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="courseButtonLayout">
+             <item>
+              <widget class="QPushButton" name="btnAddCourse">
+               <property name="text">
+                <string>添加</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnUpdateCourse">
+               <property name="text">
+                <string>更新</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnDeleteCourse">
+               <property name="text">
+                <string>删除</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnRefreshCourses">
+               <property name="text">
+                <string>刷新</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacerCourse">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="gradeTab">
+       <attribute name="title">
+        <string>成绩管理</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="gradeTabLayout">
+        <item>
+         <widget class="QGroupBox" name="gradeFilterGroup">
+          <property name="title">
+           <string>筛选条件</string>
+          </property>
+          <layout class="QHBoxLayout" name="gradeFilterLayout">
+           <item>
+            <widget class="QLabel" name="labelFilterStudent">
+             <property name="text">
+              <string>学生:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboFilterStudent"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelFilterCourse">
+             <property name="text">
+              <string>课程:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboFilterCourse"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnFilterGrades">
+             <property name="text">
+              <string>筛选</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacerFilter">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTableView" name="gradeTableView">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="gradeOperationGroup">
+          <property name="title">
+           <string>成绩信息操作</string>
+          </property>
+          <layout class="QVBoxLayout" name="gradeOperationLayout">
+           <item>
+            <layout class="QFormLayout" name="gradeFormLayout">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelGradeStudent">
+               <property name="text">
+                <string>学生:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QComboBox" name="comboGradeStudent"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelGradeCourse">
+               <property name="text">
+                <string>课程:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="comboGradeCourse"/>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelScore">
+               <property name="text">
+                <string>成绩:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="lineEditScore"/>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelSemester">
+               <property name="text">
+                <string>学期:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="lineEditSemester"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="gradeButtonLayout">
+             <item>
+              <widget class="QPushButton" name="btnAddGrade">
+               <property name="text">
+                <string>添加</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnUpdateGrade">
+               <property name="text">
+                <string>更新</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnDeleteGrade">
+               <property name="text">
+                <string>删除</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnRefreshGrades">
+               <property name="text">
+                <string>刷新</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacerGrade">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="statisticsTab">
+       <attribute name="title">
+        <string>统计分析</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="statisticsTabLayout">
+        <item>
+         <widget class="QLabel" name="labelStatisticsHint">
+          <property name="text">
+           <string>统计分析图表由代码中的 StatisticsWidget 动态生成。</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>388</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <addaction name="actionImportStudents"/>
+    <addaction name="actionImportCourses"/>
+    <addaction name="actionImportGrades"/>
+    <addaction name="separator"/>
+    <addaction name="actionExportData"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuNetwork">
+    <property name="title">
+     <string>网络</string>
+    </property>
+    <addaction name="actionSyncData"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>帮助</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuNetwork"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionImportStudents">
+   <property name="text">
+    <string>导入学生数据</string>
+   </property>
+  </action>
+  <action name="actionImportCourses">
+   <property name="text">
+    <string>导入课程数据</string>
+   </property>
+  </action>
+  <action name="actionImportGrades">
+   <property name="text">
+    <string>导入成绩数据</string>
+   </property>
+  </action>
+  <action name="actionExportData">
+   <property name="text">
+    <string>导出数据</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>退出</string>
+   </property>
+  </action>
+  <action name="actionSyncData">
+   <property name="text">
+    <string>同步数据</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>关于</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
