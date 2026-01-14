@@ -63,3 +63,79 @@ QVariant GradeModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
+QVariant GradeModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role == Qt::DisplayRole) {
+        if (orientation == Qt::Horizontal) {
+            if (section < m_headers.size()) {
+                return m_headers.at(section);
+            }
+        } else {
+            return section + 1;
+        }
+    }
+
+    return QVariant();
+}
+
+bool GradeModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+    if (!index.isValid() || role != Qt::EditRole) {
+        return false;
+    }
+
+    if (index.row() < m_grades.size() && index.column() < m_grades[index.row()].size()) {
+        m_grades[index.row()][index.column()] = value.toString();
+        emit dataChanged(index, index, {role});
+        return true;
+    }
+
+    return false;
+}
+
+Qt::ItemFlags GradeModel::flags(const QModelIndex& index) const
+{
+    if (!index.isValid()) {
+        return Qt::NoItemFlags;
+    }
+
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+}
+
+void GradeModel::setGradeData(const QList<QStringList>& data)
+{
+    beginResetModel();
+    m_grades = data;
+    endResetModel();
+}
+
+void GradeModel::addGrade(const QStringList& grade)
+{
+    beginInsertRows(QModelIndex(), m_grades.size(), m_grades.size());
+    m_grades.append(grade);
+    endInsertRows();
+}
+
+void GradeModel::removeGrade(int row)
+{
+    if (row >= 0 && row < m_grades.size()) {
+        beginRemoveRows(QModelIndex(), row, row);
+        m_grades.removeAt(row);
+        endRemoveRows();
+    }
+}
+
+QStringList GradeModel::getGrade(int row) const
+{
+    if (row >= 0 && row < m_grades.size()) {
+        return m_grades.at(row);
+    }
+    return QStringList();
+}
+
+void GradeModel::clear()
+{
+    beginResetModel();
+    m_grades.clear();
+    endResetModel();
+}
