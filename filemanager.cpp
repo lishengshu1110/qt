@@ -156,3 +156,31 @@ void FileManager::clearLogs()
     writeLog("日志文件已清空");
 }
 
+QString FileManager::getLogFilePath() const
+{
+    QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir dir;
+    if (!dir.exists(dataPath)) {
+        dir.mkpath(dataPath);
+    }
+    return dataPath + "/application.log";
+}
+
+QString FileManager::formatCSVLine(const QStringList& fields)
+{
+    QStringList formattedFields;
+
+    for (const QString& field : fields) {
+        QString formatted = field;
+
+        // 如果字段包含逗号、引号或换行符，需要用引号包围
+        if (formatted.contains(',') || formatted.contains('"') || formatted.contains('\n')) {
+            formatted.replace("\"", "\"\""); // 转义引号
+            formatted = "\"" + formatted + "\"";
+        }
+
+        formattedFields.append(formatted);
+    }
+
+    return formattedFields.join(",");
+}
