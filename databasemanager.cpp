@@ -153,6 +153,7 @@ QList<QStringList> DatabaseManager::getAllStudents()
     return result;
 }
 
+
 // 课程相关操作
 bool DatabaseManager::addCourse(const QString& courseId, const QString& courseName, int credits)
 {
