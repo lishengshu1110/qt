@@ -98,3 +98,61 @@ QList<QStringList> FileManager::importFromCSV(const QString& filePath)
     writeLog(QString("成功导入CSV文件: %1，共 %2 条记录").arg(filePath).arg(result.size()));
     return result;
 }
+void FileManager::writeLog(const QString& message, const QString& level)
+{
+    QString logFilePath = getLogFilePath();
+    QFile file(logFilePath);
+
+    if (file.open(QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&file);
+        out.setEncoding(QStringConverter::Utf8);
+
+        QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        QString logLine = QString("[%1] [%2] %3\n").arg(timestamp, level, message);
+
+        out << logLine;
+        file.close();
+
+        emit logMessage(logLine.trimmed());
+    }
+}
+
+QStringList FileManager::readLogs(int maxLines)
+{
+    QStringList result;
+    QString logFilePath = getLogFilePath();
+
+    QFile file(logFilePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return result;
+    }
+
+    QTextStream in(&file);
+    in.setEncoding(QStringConverter::Utf8);
+
+    QStringList allLines;
+    while (!in.atEnd()) {
+        allLines.append(in.readLine());
+    }
+
+    file.close();
+
+    // 返回最后maxLines行
+    int start = qMax(0, allLines.size() - maxLines);
+    for (int i = start; i < allLines.size(); i++) {
+        result.append(allLines[i]);
+    }
+
+    return result;
+}
+
+void FileManager::clearLogs()
+{
+    QString logFilePath = getLogFilePath();
+    QFile file(logFilePath);
+    if (file.exists()) {
+        file.remove();
+    }
+    writeLog("日志文件已清空");
+}
+
