@@ -233,3 +233,55 @@ void MainWindow::setupStatisticsTab()
     m_tabWidget->addTab(m_statisticsWidget, "统计分析");
 }
 
+void MainWindow::setupMenuBar()
+{
+    QMenu* fileMenu = menuBar()->addMenu("文件");
+
+    QAction* importStudentsAction = fileMenu->addAction("导入学生数据");
+    QAction* importCoursesAction = fileMenu->addAction("导入课程数据");
+    QAction* importGradesAction = fileMenu->addAction("导入成绩数据");
+    fileMenu->addSeparator();
+    QAction* exportAction = fileMenu->addAction("导出数据");
+    fileMenu->addSeparator();
+    QAction* exitAction = fileMenu->addAction("退出");
+
+    connect(importStudentsAction, &QAction::triggered, this, &MainWindow::onImportStudents);
+    connect(importCoursesAction, &QAction::triggered, this, &MainWindow::onImportCourses);
+    connect(importGradesAction, &QAction::triggered, this, &MainWindow::onImportGrades);
+    connect(exportAction, &QAction::triggered, this, &MainWindow::onExportData);
+    connect(exitAction, &QAction::triggered, this, &QWidget::close);
+
+    QMenu* networkMenu = menuBar()->addMenu("网络");
+    QAction* syncAction = networkMenu->addAction("同步数据");
+    connect(syncAction, &QAction::triggered, this, &MainWindow::onSyncData);
+
+    QMenu* helpMenu = menuBar()->addMenu("帮助");
+    QAction* aboutAction = helpMenu->addAction("关于");
+    connect(aboutAction, &QAction::triggered, [this]() {
+        QMessageBox::about(this, "关于", "学生成绩管理系统 v1.0\nQt课程设计项目");
+    });
+}
+
+void MainWindow::setupStatusBar()
+{
+    m_statusLabel = new QLabel("就绪");
+    statusBar()->addWidget(m_statusLabel);
+
+    m_progressBar = new QProgressBar();
+    m_progressBar->setVisible(false);
+    statusBar()->addPermanentWidget(m_progressBar);
+}
+
+void MainWindow::connectSignals()
+{
+    // 信号槽连接（如需要）
+}
+
+void MainWindow::refreshAllData()
+{
+    onRefreshStudents();
+    onRefreshCourses();
+    onRefreshGrades();
+    onUpdateStatistics();
+}
+
