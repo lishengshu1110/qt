@@ -285,3 +285,361 @@ void MainWindow::refreshAllData()
     onUpdateStatistics();
 }
 
+// 学生管理槽函数
+void MainWindow::onAddStudent()
+{
+    QString studentId = m_studentIdEdit->text().trimmed();
+    QString name = m_studentNameEdit->text().trimmed();
+    QString className = m_classNameEdit->text().trimmed();
+
+    if (studentId.isEmpty() || name.isEmpty() || className.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请填写完整的学生信息！");
+        return;
+    }
+
+    if (m_dbManager->addStudent(studentId, name, className)) {
+        QMessageBox::information(this, "成功", "学生添加成功！");
+        m_studentIdEdit->clear();
+        m_studentNameEdit->clear();
+        m_classNameEdit->clear();
+        onRefreshStudents();
+    } else {
+        QMessageBox::critical(this, "错误", "学生添加失败！");
+    }
+}
+
+void MainWindow::onUpdateStudent()
+{
+    QModelIndexList selected = m_studentTable->selectionModel()->selectedRows();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请选择要更新的学生！");
+        return;
+    }
+
+    int row = selected.first().row();
+    QStringList student = m_studentModel->getStudent(row);
+    QString oldStudentId = student[0];
+
+    QString studentId = m_studentIdEdit->text().trimmed();
+    QString name = m_studentNameEdit->text().trimmed();
+    QString className = m_classNameEdit->text().trimmed();
+
+    if (studentId.isEmpty() || name.isEmpty() || className.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请填写完整的学生信息！");
+        return;
+    }
+
+    if (m_dbManager->updateStudent(oldStudentId, name, className)) {
+        QMessageBox::information(this, "成功", "学生更新成功！");
+        onRefreshStudents();
+    } else {
+        QMessageBox::critical(this, "错误", "学生更新失败！");
+    }
+}
+
+void MainWindow::onDeleteStudent()
+{
+    QModelIndexList selected = m_studentTable->selectionModel()->selectedRows();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请选择要删除的学生！");
+        return;
+    }
+
+    int ret = QMessageBox::question(this, "确认", "确定要删除选中的学生吗？",
+                                    QMessageBox::Yes | QMessageBox::No);
+    if (ret == QMessageBox::Yes) {
+        int row = selected.first().row();
+        QStringList student = m_studentModel->getStudent(row);
+        QString studentId = student[0];
+
+        if (m_dbManager->deleteStudent(studentId)) {
+            QMessageBox::information(this, "成功", "学生删除成功！");
+            onRefreshStudents();
+        } else {
+            QMessageBox::critical(this, "错误", "学生删除失败！");
+        }
+    }
+}
+
+void MainWindow::onRefreshStudents()
+{
+    QList<QStringList> students = m_dbManager->getAllStudents();
+    m_studentModel->setStudentData(students);
+    m_statusLabel->setText(QString("已加载 %1 名学生").arg(students.size()));
+
+    // 更新下拉框
+    m_gradeStudentCombo->clear();
+    m_gradeStudentCombo->addItem("请选择");
+    m_filterStudentCombo->clear();
+    m_filterStudentCombo->addItem("全部");
+
+    for (const QStringList& student : students) {
+        QString display = QString("%1 - %2").arg(student[0], student[1]);
+        m_gradeStudentCombo->addItem(display, student[0]);
+        m_filterStudentCombo->addItem(display, student[0]);
+    }
+}
+
+// 课程管理槽函数
+void MainWindow::onAddCourse()
+{
+    QString courseId = m_courseIdEdit->text().trimmed();
+    QString courseName = m_courseNameEdit->text().trimmed();
+    QString creditsStr = m_creditsEdit->text().trimmed();
+
+    if (courseId.isEmpty() || courseName.isEmpty() || creditsStr.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请填写完整的课程信息！");
+        return;
+    }
+
+    bool ok;
+    int credits = creditsStr.toInt(&ok);
+    if (!ok || credits <= 0) {
+        QMessageBox::warning(this, "警告", "学分必须是正整数！");
+        return;
+    }
+
+    if (m_dbManager->addCourse(courseId, courseName, credits)) {
+        QMessageBox::information(this, "成功", "课程添加成功！");
+        m_courseIdEdit->clear();
+        m_courseNameEdit->clear();
+        m_creditsEdit->clear();
+        onRefreshCourses();
+    } else {
+        QMessageBox::critical(this, "错误", "课程添加失败！");
+    }
+}
+
+void MainWindow::onUpdateCourse()
+{
+    QModelIndexList selected = m_courseTable->selectionModel()->selectedRows();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请选择要更新的课程！");
+        return;
+    }
+
+    int row = selected.first().row();
+    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_courseTable->model());
+    QString oldCourseId = model->item(row, 0)->text();
+
+    QString courseId = m_courseIdEdit->text().trimmed();
+    QString courseName = m_courseNameEdit->text().trimmed();
+    QString creditsStr = m_creditsEdit->text().trimmed();
+
+    if (courseId.isEmpty() || courseName.isEmpty() || creditsStr.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请填写完整的课程信息！");
+        return;
+    }
+
+    bool ok;
+    int credits = creditsStr.toInt(&ok);
+    if (!ok || credits <= 0) {
+        QMessageBox::warning(this, "警告", "学分必须是正整数！");
+        return;
+    }
+
+    if (m_dbManager->updateCourse(oldCourseId, courseName, credits)) {
+        QMessageBox::information(this, "成功", "课程更新成功！");
+        onRefreshCourses();
+    } else {
+        QMessageBox::critical(this, "错误", "课程更新失败！");
+    }
+}
+
+void MainWindow::onDeleteCourse()
+{
+    QModelIndexList selected = m_courseTable->selectionModel()->selectedRows();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请选择要删除的课程！");
+        return;
+    }
+
+    int ret = QMessageBox::question(this, "确认", "确定要删除选中的课程吗？",
+                                    QMessageBox::Yes | QMessageBox::No);
+    if (ret == QMessageBox::Yes) {
+        QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_courseTable->model());
+        int row = selected.first().row();
+        QString courseId = model->item(row, 0)->text();
+
+        if (m_dbManager->deleteCourse(courseId)) {
+            QMessageBox::information(this, "成功", "课程删除成功！");
+            onRefreshCourses();
+        } else {
+            QMessageBox::critical(this, "错误", "课程删除失败！");
+        }
+    }
+}
+
+void MainWindow::onRefreshCourses()
+{
+    QList<QStringList> courses = m_dbManager->getAllCourses();
+    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_courseTable->model());
+    model->setRowCount(0);
+
+    for (const QStringList& course : courses) {
+        QList<QStandardItem*> items;
+        items << new QStandardItem(course[0]);
+        items << new QStandardItem(course[1]);
+        items << new QStandardItem(course[2]);
+        model->appendRow(items);
+    }
+
+    m_statusLabel->setText(QString("已加载 %1 门课程").arg(courses.size()));
+
+    // 更新下拉框
+    m_gradeCourseCombo->clear();
+    m_gradeCourseCombo->addItem("请选择");
+    m_filterCourseCombo->clear();
+    m_filterCourseCombo->addItem("全部");
+
+    for (const QStringList& course : courses) {
+        QString display = QString("%1 - %2").arg(course[0], course[1]);
+        m_gradeCourseCombo->addItem(display, course[0]);
+        m_filterCourseCombo->addItem(display, course[0]);
+    }
+}
+
+// 成绩管理槽函数
+void MainWindow::onAddGrade()
+{
+    if (m_gradeStudentCombo->currentIndex() == 0 || m_gradeCourseCombo->currentIndex() == 0) {
+        QMessageBox::warning(this, "警告", "请选择学生和课程！");
+        return;
+    }
+
+    QString studentId = m_gradeStudentCombo->currentData().toString();
+    QString courseId = m_gradeCourseCombo->currentData().toString();
+    QString scoreStr = m_scoreEdit->text().trimmed();
+    QString semester = m_semesterEdit->text().trimmed();
+
+    if (scoreStr.isEmpty() || semester.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请填写完整的成绩信息！");
+        return;
+    }
+
+    bool ok;
+    double score = scoreStr.toDouble(&ok);
+    if (!ok || score < 0 || score > 100) {
+        QMessageBox::warning(this, "警告", "成绩必须是0-100之间的数字！");
+        return;
+    }
+
+    if (m_dbManager->addGrade(studentId, courseId, score, semester)) {
+        QMessageBox::information(this, "成功", "成绩添加成功！");
+        m_scoreEdit->clear();
+        m_semesterEdit->clear();
+        onRefreshGrades();
+        onUpdateStatistics();
+    } else {
+        QMessageBox::critical(this, "错误", "成绩添加失败！");
+    }
+}
+
+void MainWindow::onUpdateGrade()
+{
+    QModelIndexList selected = m_gradeTable->selectionModel()->selectedRows();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请选择要更新的成绩！");
+        return;
+    }
+
+    int row = selected.first().row();
+    QStringList grade = m_gradeModel->getGrade(row);
+
+    QString studentId = grade[0];
+    QString courseId = grade[2];
+    QString semester = grade[5];
+    QString scoreStr = m_scoreEdit->text().trimmed();
+
+    if (scoreStr.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请输入成绩！");
+        return;
+    }
+
+    bool ok;
+    double score = scoreStr.toDouble(&ok);
+    if (!ok || score < 0 || score > 100) {
+        QMessageBox::warning(this, "警告", "成绩必须是0-100之间的数字！");
+        return;
+    }
+
+    if (m_dbManager->updateGrade(studentId, courseId, score, semester)) {
+        QMessageBox::information(this, "成功", "成绩更新成功！");
+        onRefreshGrades();
+        onUpdateStatistics();
+    } else {
+        QMessageBox::critical(this, "错误", "成绩更新失败！");
+    }
+}
+
+void MainWindow::onDeleteGrade()
+{
+    QModelIndexList selected = m_gradeTable->selectionModel()->selectedRows();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "警告", "请选择要删除的成绩！");
+        return;
+    }
+
+    int ret = QMessageBox::question(this, "确认", "确定要删除选中的成绩吗？",
+                                    QMessageBox::Yes | QMessageBox::No);
+    if (ret == QMessageBox::Yes) {
+        int row = selected.first().row();
+        QStringList grade = m_gradeModel->getGrade(row);
+
+        QString studentId = grade[0];
+        QString courseId = grade[2];
+        QString semester = grade[5];
+
+        if (m_dbManager->deleteGrade(studentId, courseId, semester)) {
+            QMessageBox::information(this, "成功", "成绩删除成功！");
+            onRefreshGrades();
+            onUpdateStatistics();
+        } else {
+            QMessageBox::critical(this, "错误", "成绩删除失败！");
+        }
+    }
+}
+
+void MainWindow::onRefreshGrades()
+{
+    QList<QStringList> grades = m_dbManager->getAllGrades();
+    m_gradeModel->setGradeData(grades);
+    m_statusLabel->setText(QString("已加载 %1 条成绩记录").arg(grades.size()));
+}
+
+void MainWindow::onFilterGrades()
+{
+    QString studentId;
+    QString courseId;
+
+    if (m_filterStudentCombo->currentIndex() > 0) {
+        studentId = m_filterStudentCombo->currentData().toString();
+    }
+
+    if (m_filterCourseCombo->currentIndex() > 0) {
+        courseId = m_filterCourseCombo->currentData().toString();
+    }
+
+    QList<QStringList> grades;
+
+    if (!studentId.isEmpty() && !courseId.isEmpty()) {
+        // 同时筛选学生和课程
+        QList<QStringList> allGrades = m_dbManager->getAllGrades();
+        for (const QStringList& grade : allGrades) {
+            if (grade[0] == studentId && grade[2] == courseId) {
+                grades.append(grade);
+            }
+        }
+    } else if (!studentId.isEmpty()) {
+        grades = m_dbManager->getGradesByStudent(studentId);
+    } else if (!courseId.isEmpty()) {
+        grades = m_dbManager->getGradesByCourse(courseId);
+    } else {
+        grades = m_dbManager->getAllGrades();
+    }
+
+    m_gradeModel->setGradeData(grades);
+    m_statusLabel->setText(QString("已筛选 %1 条成绩记录").arg(grades.size()));
+}
+
+
