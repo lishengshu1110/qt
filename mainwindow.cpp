@@ -258,7 +258,7 @@ void MainWindow::setupMenuBar()
     QMenu* helpMenu = menuBar()->addMenu("帮助");
     QAction* aboutAction = helpMenu->addAction("关于");
     connect(aboutAction, &QAction::triggered, [this]() {
-        QMessageBox::about(this, "关于", "学生成绩管理系统 v1.0\nQt课程设计项目");
+        QMessageBox::about(this, "关于", "学生成绩管理系统 1.0（制作人：李晟舒）");
     });
 }
 
@@ -642,4 +642,171 @@ void MainWindow::onFilterGrades()
     m_statusLabel->setText(QString("已筛选 %1 条成绩记录").arg(grades.size()));
 }
 
+// 文件操作槽函数
+void MainWindow::onImportStudents()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "选择CSV文件", "", "CSV文件 (*.csv)");
+    if (fileName.isEmpty()) {
+        return;
+    }
 
+    m_statusLabel->setText("正在导入学生数据...");
+    QApplication::processEvents(); // 更新UI
+
+    // 使用FileManager导入CSV文件
+    QList<QStringList> data = m_fileManager->importFromCSV(fileName);
+
+    if (data.isEmpty()) {
+        QMessageBox::warning(this, "警告", "文件为空或格式错误！");
+        m_statusLabel->setText("就绪");
+        return;
+    }
+
+    // 将导入的数据写入数据库
+    int count = 0;
+    int total = data.size();
+
+    for (int i = 0; i < total; i++) {
+        const QStringList& row = data[i];
+        if (row.size() >= 3) {
+            // 跳过表头
+            if (i == 0 && (row[0] == "学号" || row[0].contains("student"))) {
+                continue;
+            }
+            if (m_dbManager->addStudent(row[0].trimmed(), row[1].trimmed(), row[2].trimmed())) {
+                count++;
+            }
+        }
+    }
+
+    QMessageBox::information(this, "成功", QString("成功导入 %1 条学生记录").arg(count));
+    refreshAllData();
+    m_statusLabel->setText("就绪");
+}
+
+void MainWindow::onImportCourses()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "选择CSV文件", "", "CSV文件 (*.csv)");
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    m_statusLabel->setText("正在导入课程数据...");
+    QApplication::processEvents(); // 更新UI
+
+    // 使用FileManager导入CSV文件
+    QList<QStringList> data = m_fileManager->importFromCSV(fileName);
+
+    if (data.isEmpty()) {
+        QMessageBox::warning(this, "警告", "文件为空或格式错误！");
+        m_statusLabel->setText("就绪");
+        return;
+    }
+
+    // 将导入的数据写入数据库
+    int count = 0;
+    int total = data.size();
+
+    for (int i = 0; i < total; i++) {
+        const QStringList& row = data[i];
+        if (row.size() >= 3) {
+            // 跳过表头
+            if (i == 0 && (row[0] == "课程编号" || row[0].contains("course"))) {
+                continue;
+            }
+            bool ok;
+            int credits = row[2].toInt(&ok);
+            if (ok && credits > 0 && m_dbManager->addCourse(row[0].trimmed(), row[1].trimmed(), credits)) {
+                count++;
+            }
+        }
+    }
+
+    QMessageBox::information(this, "成功", QString("成功导入 %1 条课程记录").arg(count));
+    refreshAllData();
+    m_statusLabel->setText("就绪");
+}
+
+void MainWindow::onImportGrades()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "选择CSV文件", "", "CSV文件 (*.csv)");
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    m_statusLabel->setText("正在导入成绩数据...");
+    QApplication::processEvents(); // 更新UI
+
+    // 使用FileManager导入CSV文件
+    QList<QStringList> data = m_fileManager->importFromCSV(fileName);
+
+    if (data.isEmpty()) {
+        QMessageBox::warning(this, "警告", "文件为空或格式错误！");
+        m_statusLabel->setText("就绪");
+        return;
+    }
+
+    // 将导入的数据写入数据库
+    int count = 0;
+    int total = data.size();
+
+    for (int i = 0; i < total; i++) {
+        const QStringList& row = data[i];
+        if (row.size() >= 4) {
+            // 跳过表头
+            if (i == 0 && (row[0] == "学号" || row[0].contains("student"))) {
+                continue;
+            }
+            bool ok;
+            double score = row[2].toDouble(&ok);
+            if (ok && score >= 0 && score <= 100 &&
+                m_dbManager->addGrade(row[0].trimmed(), row[1].trimmed(), score, row[3].trimmed())) {
+                count++;
+            }
+        }
+    }
+
+    QMessageBox::information(this, "成功", QString("成功导入 %1 条成绩记录").arg(count));
+    refreshAllData();
+    onUpdateStatistics();
+    m_statusLabel->setText("就绪");
+}
+
+void MainWindow::onExportData()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "导出数据", "", "CSV文件 (*.csv)");
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    QList<QStringList> data = m_dbManager->getAllGrades();
+    QStringList headers = QStringList() << "学号" << "姓名" << "课程编号" << "课程名称" << "成绩" << "学期";
+
+    if (m_fileManager->exportToCSV(fileName, data, headers)) {
+        QMessageBox::information(this, "成功", "数据导出成功！");
+    } else {
+        QMessageBox::critical(this, "错误", "数据导出失败！");
+    }
+}
+
+
+// 统计槽函数
+void MainWindow::onUpdateStatistics()
+{
+    QList<QPair<QString, double>> ranking = m_dbManager->getStudentRanking();
+    m_statisticsWidget->updateStudentRankingChart(ranking);
+}
+
+// 网络同步槽函数
+// 目前实现为本地数据刷新和状态提示，预留将来与服务器同步的扩展点
+void MainWindow::onSyncData()
+{
+    m_statusLabel->setText("正在同步数据...");
+    QApplication::processEvents();
+
+    // 这里可以在将来加入真实的网络同步逻辑
+    // 目前先刷新本地数据库视图，保证界面数据最新
+    refreshAllData();
+
+    m_statusLabel->setText("数据同步完成");
+}
