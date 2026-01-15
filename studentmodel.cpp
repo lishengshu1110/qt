@@ -77,4 +77,41 @@ Qt::ItemFlags StudentModel::flags(const QModelIndex& index) const
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
 }
 
+void StudentModel::setStudentData(const QList<QStringList>& data)
+{
+    beginResetModel();
+    m_students = data;
+    endResetModel();
+}
+
+void StudentModel::addStudent(const QStringList& student)
+{
+    beginInsertRows(QModelIndex(), m_students.size(), m_students.size());
+    m_students.append(student);
+    endInsertRows();
+}
+
+void StudentModel::removeStudent(int row)
+{
+    if (row >= 0 && row < m_students.size()) {
+        beginRemoveRows(QModelIndex(), row, row);
+        m_students.removeAt(row);
+        endRemoveRows();
+    }
+}
+
+QStringList StudentModel::getStudent(int row) const
+{
+    if (row >= 0 && row < m_students.size()) {
+        return m_students.at(row);
+    }
+    return QStringList();
+}
+
+void StudentModel::clear()
+{
+    beginResetModel();
+    m_students.clear();
+    endResetModel();
+}
 
