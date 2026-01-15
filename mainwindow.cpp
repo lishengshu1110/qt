@@ -27,7 +27,6 @@ MainWindow::MainWindow(QWidget* parent)
     setupUI();
     setupMenuBar();
     setupStatusBar();
-    connectSignals();
     refreshAllData();
 
     setWindowTitle("学生成绩管理系统");
@@ -268,11 +267,6 @@ void MainWindow::setupStatusBar()
     m_progressBar = new QProgressBar();
     m_progressBar->setVisible(false);
     statusBar()->addPermanentWidget(m_progressBar);
-}
-
-void MainWindow::connectSignals()
-{
-    // 信号槽连接（如需要）
 }
 
 void MainWindow::refreshAllData()
