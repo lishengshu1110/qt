@@ -39,3 +39,70 @@ void StatisticsWidget::setupUI()
     m_mainLayout->addWidget(m_chartView);
 }
 
+void StatisticsWidget::updateStudentRankingChart(const QList<QPair<QString, double>>& ranking)
+{
+    m_currentData = ranking;
+
+    if (m_chartTypeCombo->currentIndex() == 0) {
+        // 柱状图
+        clearChart();
+        m_chart = new QChart();
+        m_chart->setTitle("学生成绩排名");
+
+        QBarSeries* series = new QBarSeries();
+        QBarSet* set = new QBarSet("平均成绩");
+
+        QStringList categories;
+        for (const auto& pair : ranking) {
+            *set << pair.second;
+            categories << pair.first;
+        }
+
+        series->append(set);
+        m_chart->addSeries(series);
+
+        QBarCategoryAxis* axisX = new QBarCategoryAxis();
+        axisX->append(categories);
+        m_chart->addAxis(axisX, Qt::AlignBottom);
+        series->attachAxis(axisX);
+
+        QValueAxis* axisY = new QValueAxis();
+        axisY->setRange(0, 100);
+        axisY->setTitleText("成绩");
+        m_chart->addAxis(axisY, Qt::AlignLeft);
+        series->attachAxis(axisY);
+
+        m_chartView->setChart(m_chart);
+    } else {
+        // 折线图
+        clearChart();
+        m_chart = new QChart();
+        m_chart->setTitle("学生成绩排名趋势");
+
+        QLineSeries* series = new QLineSeries();
+        series->setName("平均成绩");
+
+        int index = 0;
+        for (const auto& pair : ranking) {
+            series->append(index, pair.second);
+            index++;
+        }
+
+        m_chart->addSeries(series);
+
+        QValueAxis* axisX = new QValueAxis();
+        axisX->setRange(0, ranking.size() - 1);
+        axisX->setTitleText("排名");
+        m_chart->addAxis(axisX, Qt::AlignBottom);
+        series->attachAxis(axisX);
+
+        QValueAxis* axisY = new QValueAxis();
+        axisY->setRange(0, 100);
+        axisY->setTitleText("成绩");
+        m_chart->addAxis(axisY, Qt::AlignLeft);
+        series->attachAxis(axisY);
+
+        m_chartView->setChart(m_chart);
+    }
+}
+
