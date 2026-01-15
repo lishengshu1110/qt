@@ -24,7 +24,7 @@ QVariant GradeModel::data(const QModelIndex& index, int role) const
     if (!index.isValid() || index.row() >= m_grades.size()) {
         return QVariant();
     }
-
+    
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
         const QStringList& grade = m_grades.at(index.row());
         if (index.column() < grade.size()) {
@@ -39,11 +39,11 @@ QVariant GradeModel::data(const QModelIndex& index, int role) const
             return grade.at(index.column());
         }
     }
-
+    
     if (role == Qt::TextAlignmentRole) {
         return Qt::AlignCenter;
     }
-
+    
     // 成绩列的颜色显示
     if (role == Qt::ForegroundRole && index.column() == 4) {
         const QStringList& grade = m_grades.at(index.row());
@@ -59,7 +59,7 @@ QVariant GradeModel::data(const QModelIndex& index, int role) const
             }
         }
     }
-
+    
     return QVariant();
 }
 
@@ -74,7 +74,7 @@ QVariant GradeModel::headerData(int section, Qt::Orientation orientation, int ro
             return section + 1;
         }
     }
-
+    
     return QVariant();
 }
 
@@ -83,13 +83,13 @@ bool GradeModel::setData(const QModelIndex& index, const QVariant& value, int ro
     if (!index.isValid() || role != Qt::EditRole) {
         return false;
     }
-
+    
     if (index.row() < m_grades.size() && index.column() < m_grades[index.row()].size()) {
         m_grades[index.row()][index.column()] = value.toString();
         emit dataChanged(index, index, {role});
         return true;
     }
-
+    
     return false;
 }
 
@@ -98,7 +98,7 @@ Qt::ItemFlags GradeModel::flags(const QModelIndex& index) const
     if (!index.isValid()) {
         return Qt::NoItemFlags;
     }
-
+    
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
 }
 

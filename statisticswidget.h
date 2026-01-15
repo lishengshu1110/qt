@@ -32,7 +32,7 @@ class StatisticsWidget : public QWidget
 
 public:
     explicit StatisticsWidget(QWidget* parent = nullptr);
-
+    
     // 更新图表数据
     void updateStudentRankingChart(const QList<QPair<QString, double>>& ranking);
     void updateCourseStatisticsChart(const QList<QPair<QString, double>>& statistics);
@@ -44,13 +44,13 @@ private slots:
 private:
     void setupUI();
     void clearChart();
-
+    
     QVBoxLayout* m_mainLayout;
     QHBoxLayout* m_controlLayout;
     QComboBox* m_chartTypeCombo;
     QChartView* m_chartView;
     QChart* m_chart;
-
+    
     QList<QPair<QString, double>> m_currentData;
 };
 

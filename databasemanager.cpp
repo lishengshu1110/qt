@@ -1,4 +1,4 @@
-#include "databasemanager.h"
+#include "DatabaseManager.h"
 #include <QStandardPaths>
 #include <QDir>
 #include <QFileInfo>
@@ -9,7 +9,7 @@ DatabaseManager::DatabaseManager(QObject* parent)
 {
     // 设置数据库路径为指定路径
     dbPath = "E:/sqLite/数据库/qiMo.db";
-
+    
     // 确保数据库目录存在，如果不存在则创建
     QFileInfo fileInfo(dbPath);
     QDir dir = fileInfo.absoluteDir();
@@ -35,19 +35,19 @@ bool DatabaseManager::initializeDatabase()
 {
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbPath);
-
+    
     if (!db.open()) {
         qDebug() << "数据库打开失败:" << db.lastError().text();
         return false;
     }
-
+    
     return createTables();
 }
 
 bool DatabaseManager::createTables()
 {
     QSqlQuery query(db);
-
+    
     // 创建学生表
     QString createStudentTable = R"(
         CREATE TABLE IF NOT EXISTS students (
@@ -57,12 +57,12 @@ bool DatabaseManager::createTables()
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     )";
-
+    
     if (!query.exec(createStudentTable)) {
         qDebug() << "创建学生表失败:" << query.lastError().text();
         return false;
     }
-
+    
     // 创建课程表
     QString createCourseTable = R"(
         CREATE TABLE IF NOT EXISTS courses (
@@ -72,12 +72,12 @@ bool DatabaseManager::createTables()
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     )";
-
+    
     if (!query.exec(createCourseTable)) {
         qDebug() << "创建课程表失败:" << query.lastError().text();
         return false;
     }
-
+    
     // 创建成绩表
     QString createGradeTable = R"(
         CREATE TABLE IF NOT EXISTS grades (
@@ -92,12 +92,12 @@ bool DatabaseManager::createTables()
             UNIQUE(student_id, course_id, semester)
         )
     )";
-
+    
     if (!query.exec(createGradeTable)) {
         qDebug() << "创建成绩表失败:" << query.lastError().text();
         return false;
     }
-
+    
     return true;
 }
 
@@ -109,7 +109,7 @@ bool DatabaseManager::addStudent(const QString& studentId, const QString& name, 
     query.addBindValue(studentId);
     query.addBindValue(name);
     query.addBindValue(className);
-
+    
     if (!query.exec()) {
         qDebug() << "添加学生失败:" << query.lastError().text();
         return false;
@@ -124,7 +124,7 @@ bool DatabaseManager::updateStudent(const QString& studentId, const QString& nam
     query.addBindValue(name);
     query.addBindValue(className);
     query.addBindValue(studentId);
-
+    
     return query.exec();
 }
 
@@ -133,7 +133,7 @@ bool DatabaseManager::deleteStudent(const QString& studentId)
     QSqlQuery query(db);
     query.prepare("DELETE FROM students WHERE student_id = ?");
     query.addBindValue(studentId);
-
+    
     return query.exec();
 }
 
@@ -141,7 +141,7 @@ QList<QStringList> DatabaseManager::getAllStudents()
 {
     QList<QStringList> result;
     QSqlQuery query("SELECT student_id, name, class_name FROM students ORDER BY student_id", db);
-
+    
     while (query.next()) {
         QStringList row;
         row << query.value(0).toString();
@@ -149,10 +149,9 @@ QList<QStringList> DatabaseManager::getAllStudents()
         row << query.value(2).toString();
         result.append(row);
     }
-
+    
     return result;
 }
-
 
 // 课程相关操作
 bool DatabaseManager::addCourse(const QString& courseId, const QString& courseName, int credits)
@@ -162,7 +161,7 @@ bool DatabaseManager::addCourse(const QString& courseId, const QString& courseNa
     query.addBindValue(courseId);
     query.addBindValue(courseName);
     query.addBindValue(credits);
-
+    
     return query.exec();
 }
 
@@ -173,7 +172,7 @@ bool DatabaseManager::updateCourse(const QString& courseId, const QString& cours
     query.addBindValue(courseName);
     query.addBindValue(credits);
     query.addBindValue(courseId);
-
+    
     return query.exec();
 }
 
@@ -182,7 +181,7 @@ bool DatabaseManager::deleteCourse(const QString& courseId)
     QSqlQuery query(db);
     query.prepare("DELETE FROM courses WHERE course_id = ?");
     query.addBindValue(courseId);
-
+    
     return query.exec();
 }
 
@@ -190,7 +189,7 @@ QList<QStringList> DatabaseManager::getAllCourses()
 {
     QList<QStringList> result;
     QSqlQuery query("SELECT course_id, course_name, credits FROM courses ORDER BY course_id", db);
-
+    
     while (query.next()) {
         QStringList row;
         row << query.value(0).toString();
@@ -198,13 +197,13 @@ QList<QStringList> DatabaseManager::getAllCourses()
         row << query.value(2).toString();
         result.append(row);
     }
-
+    
     return result;
 }
 
 // 成绩相关操作
-bool DatabaseManager::addGrade(const QString& studentId, const QString& courseId,
-                               double score, const QString& semester)
+bool DatabaseManager::addGrade(const QString& studentId, const QString& courseId, 
+                                double score, const QString& semester)
 {
     QSqlQuery query(db);
     query.prepare("INSERT OR REPLACE INTO grades (student_id, course_id, score, semester) VALUES (?, ?, ?, ?)");
@@ -212,11 +211,11 @@ bool DatabaseManager::addGrade(const QString& studentId, const QString& courseId
     query.addBindValue(courseId);
     query.addBindValue(score);
     query.addBindValue(semester);
-
+    
     return query.exec();
 }
 
-bool DatabaseManager::updateGrade(const QString& studentId, const QString& courseId,
+bool DatabaseManager::updateGrade(const QString& studentId, const QString& courseId, 
                                   double score, const QString& semester)
 {
     QSqlQuery query(db);
@@ -225,7 +224,7 @@ bool DatabaseManager::updateGrade(const QString& studentId, const QString& cours
     query.addBindValue(studentId);
     query.addBindValue(courseId);
     query.addBindValue(semester);
-
+    
     return query.exec();
 }
 
@@ -236,7 +235,7 @@ bool DatabaseManager::deleteGrade(const QString& studentId, const QString& cours
     query.addBindValue(studentId);
     query.addBindValue(courseId);
     query.addBindValue(semester);
-
+    
     return query.exec();
 }
 
@@ -250,7 +249,7 @@ QList<QStringList> DatabaseManager::getAllGrades()
         JOIN courses c ON g.course_id = c.course_id
         ORDER BY g.student_id, g.course_id, g.semester
     )", db);
-
+    
     while (query.next()) {
         QStringList row;
         for (int i = 0; i < 6; i++) {
@@ -258,7 +257,7 @@ QList<QStringList> DatabaseManager::getAllGrades()
         }
         result.append(row);
     }
-
+    
     return result;
 }
 
@@ -275,7 +274,7 @@ QList<QStringList> DatabaseManager::getGradesByStudent(const QString& studentId)
         ORDER BY g.semester, g.course_id
     )");
     query.addBindValue(studentId);
-
+    
     if (query.exec()) {
         while (query.next()) {
             QStringList row;
@@ -285,7 +284,7 @@ QList<QStringList> DatabaseManager::getGradesByStudent(const QString& studentId)
             result.append(row);
         }
     }
-
+    
     return result;
 }
 
@@ -302,7 +301,7 @@ QList<QStringList> DatabaseManager::getGradesByCourse(const QString& courseId)
         ORDER BY g.score DESC
     )");
     query.addBindValue(courseId);
-
+    
     if (query.exec()) {
         while (query.next()) {
             QStringList row;
@@ -312,7 +311,7 @@ QList<QStringList> DatabaseManager::getGradesByCourse(const QString& courseId)
             result.append(row);
         }
     }
-
+    
     return result;
 }
 
@@ -322,7 +321,7 @@ double DatabaseManager::getAverageScore(const QString& studentId)
     QSqlQuery query(db);
     query.prepare("SELECT AVG(score) FROM grades WHERE student_id = ?");
     query.addBindValue(studentId);
-
+    
     if (query.exec() && query.next()) {
         return query.value(0).toDouble();
     }
@@ -334,7 +333,7 @@ double DatabaseManager::getCourseAverageScore(const QString& courseId)
     QSqlQuery query(db);
     query.prepare("SELECT AVG(score) FROM grades WHERE course_id = ?");
     query.addBindValue(courseId);
-
+    
     if (query.exec() && query.next()) {
         return query.value(0).toDouble();
     }
@@ -351,13 +350,13 @@ QList<QPair<QString, double>> DatabaseManager::getStudentRanking()
         GROUP BY s.student_id, s.name
         ORDER BY avg_score DESC
     )", db);
-
+    
     while (query.next()) {
         QString studentId = query.value(0).toString();
         double avgScore = query.value(2).toDouble();
         result.append(qMakePair(studentId, avgScore));
     }
-
+    
     return result;
 }
 
@@ -371,12 +370,12 @@ QList<QPair<QString, double>> DatabaseManager::getCourseStatistics()
         GROUP BY c.course_id
         ORDER BY avg_score DESC
     )", db);
-
+    
     while (query.next()) {
         QString courseId = query.value(0).toString();
         double avgScore = query.value(1).toDouble();
         result.append(qMakePair(courseId, avgScore));
     }
-
+    
     return result;
 }

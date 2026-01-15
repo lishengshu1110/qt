@@ -251,9 +251,7 @@ void MainWindow::setupMenuBar()
     connect(exportAction, &QAction::triggered, this, &MainWindow::onExportData);
     connect(exitAction, &QAction::triggered, this, &QWidget::close);
 
-    QMenu* networkMenu = menuBar()->addMenu("网络");
-    QAction* syncAction = networkMenu->addAction("同步数据");
-    connect(syncAction, &QAction::triggered, this, &MainWindow::onSyncData);
+
 
     QMenu* helpMenu = menuBar()->addMenu("帮助");
     QAction* aboutAction = helpMenu->addAction("关于");
@@ -797,16 +795,3 @@ void MainWindow::onUpdateStatistics()
     m_statisticsWidget->updateStudentRankingChart(ranking);
 }
 
-// 网络同步槽函数
-// 目前实现为本地数据刷新和状态提示，预留将来与服务器同步的扩展点
-void MainWindow::onSyncData()
-{
-    m_statusLabel->setText("正在同步数据...");
-    QApplication::processEvents();
-
-    // 这里可以在将来加入真实的网络同步逻辑
-    // 目前先刷新本地数据库视图，保证界面数据最新
-    refreshAllData();
-
-    m_statusLabel->setText("数据同步完成");
-}

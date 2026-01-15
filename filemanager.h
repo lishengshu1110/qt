@@ -15,16 +15,16 @@ class FileManager : public QObject
 
 public:
     explicit FileManager(QObject* parent = nullptr);
-
+    
     // 导出功能
-    bool exportToCSV(const QString& filePath, const QList<QStringList>& data,
+    bool exportToCSV(const QString& filePath, const QList<QStringList>& data, 
                      const QStringList& headers);
     bool exportToExcel(const QString& filePath, const QList<QStringList>& data,
-                       const QStringList& headers);
-
+                      const QStringList& headers);
+    
     // 导入功能
     QList<QStringList> importFromCSV(const QString& filePath);
-
+    
     // 日志功能
     void writeLog(const QString& message, const QString& level = "INFO");
     QStringList readLogs(int maxLines = 100);

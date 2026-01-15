@@ -41,26 +41,26 @@ private slots:
     void onUpdateStudent();
     void onDeleteStudent();
     void onRefreshStudents();
-
+    
     // 课程管理
     void onAddCourse();
     void onUpdateCourse();
     void onDeleteCourse();
     void onRefreshCourses();
-
+    
     // 成绩管理
     void onAddGrade();
     void onUpdateGrade();
     void onDeleteGrade();
     void onRefreshGrades();
     void onFilterGrades();
-
+    
     // 文件操作
     void onImportStudents();
     void onImportCourses();
     void onImportGrades();
     void onExportData();
-
+    
     // 统计与同步
     void onUpdateStatistics();
     void onSyncData();
@@ -75,10 +75,10 @@ private:
     void setupStatusBar();
     void connectSignals();
     void refreshAllData();
-
+    
     // UI组件
     QTabWidget* m_tabWidget;
-
+    
     // 学生管理标签页
     QWidget* m_studentTab;
     QTableView* m_studentTable;
@@ -86,14 +86,14 @@ private:
     QLineEdit* m_studentIdEdit;
     QLineEdit* m_studentNameEdit;
     QLineEdit* m_classNameEdit;
-
+    
     // 课程管理标签页
     QWidget* m_courseTab;
     QTableView* m_courseTable;
     QLineEdit* m_courseIdEdit;
     QLineEdit* m_courseNameEdit;
     QLineEdit* m_creditsEdit;
-
+    
     // 成绩管理标签页
     QWidget* m_gradeTab;
     QTableView* m_gradeTable;
@@ -104,14 +104,14 @@ private:
     QLineEdit* m_semesterEdit;
     QComboBox* m_filterStudentCombo;
     QComboBox* m_filterCourseCombo;
-
+    
     // 统计标签页
     StatisticsWidget* m_statisticsWidget;
-
+    
     // 工具栏
     QProgressBar* m_progressBar;
     QLabel* m_statusLabel;
-
+    
     // 数据管理
     DatabaseManager* m_dbManager;
     FileManager* m_fileManager;
