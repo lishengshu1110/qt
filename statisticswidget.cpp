@@ -173,3 +173,54 @@ void StatisticsWidget::updateCourseStatisticsChart(const QList<QPair<QString, do
     }
 }
 
+void StatisticsWidget::updateGradeTrendChart(const QList<QPair<QString, double>>& trend)
+{
+    m_currentData = trend;
+
+    clearChart();
+    m_chart = new QChart();
+    m_chart->setTitle("成绩变化趋势");
+
+    QLineSeries* series = new QLineSeries();
+    series->setName("成绩");
+
+    int index = 0;
+    for (const auto& pair : trend) {
+        series->append(index, pair.second);
+        index++;
+    }
+
+    m_chart->addSeries(series);
+
+    QValueAxis* axisX = new QValueAxis();
+    axisX->setRange(0, trend.size() - 1);
+    axisX->setTitleText("学期");
+    m_chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    QValueAxis* axisY = new QValueAxis();
+    axisY->setRange(0, 100);
+    axisY->setTitleText("成绩");
+    m_chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
+    m_chartView->setChart(m_chart);
+}
+
+void StatisticsWidget::onChartTypeChanged(int index)
+{
+    // 根据当前数据类型重新绘制图表
+    if (!m_currentData.isEmpty()) {
+        // 简单处理：如果是学生排名数据，重新绘制
+        updateStudentRankingChart(m_currentData);
+    }
+}
+
+void StatisticsWidget::clearChart()
+{
+    if (m_chart) {
+        m_chartView->setChart(nullptr);
+        delete m_chart;
+        m_chart = nullptr;
+    }
+}
